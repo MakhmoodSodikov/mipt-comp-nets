@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "utf-8" >  <!-- задаем кодировку документа UTF-8 -->
+	</head>
+	<body>
+		<h2>Максимальная температура за последние 30 дней в Москве</h2>
+		<table id="main_table">
+			<tr><th>Дата</th><th>Температура</th></tr> <!--ряд с ячейками заголовков-->
+		</table>
+
+<style>
+table {
+	width: 100%;
+	margin-bottom: 20px;
+	border: 1px solid #dddddd;
+	border-collapse: collapse; 
+}
+table th {
+	font-weight: bold;
+	padding: 5px;
+	background: #efefef;
+	border: 1px solid #dddddd;
+}
+table td {
+	border: 1px solid #dddddd;
+	padding: 5px;
+}}
+</style>
+
+
+
+<script>
+
+async function load_data() {
+
+var today = new Date()
+var end_date = today.toISOString().slice(0, 10)
+
+today.setDate(today.getDate() - 30);
+var start_date = today.toISOString().slice(0, 10)
+
+var response = await fetch(`https://archive-api.open-meteo.com/v1/era5?latitude=55.75&longitude=37.62&start_date=${start_date}&end_date=${end_date}&daily=apparent_temperature_max&timezone=Europe%2FMoscow`);
+
+var json = await response.json();
+
+
+for(i in json.daily.time){
+    var tr = document.createElement("tr")
+    var td_date = document.createElement("td")
+    var td_temp = document.createElement("td")
+
+    td_date.innerText = json.daily['time'][i]
+    td_temp.innerText = json.daily['apparent_temperature_max'][i]
+
+    tr.appendChild(td_date)
+    tr.appendChild(td_temp)
+    document.getElementsByTagName("table")[0].appendChild(tr)
+}
+
+}
+
+load_data()
+</script>
+		
+	</body>
+</html>
